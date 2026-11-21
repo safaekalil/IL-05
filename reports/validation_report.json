@@ -1,0 +1,24 @@
+{
+    "source": "2015-01-01-15.json.gz",
+    "total_events": 11351,
+    "valid_events": 11351,
+    "invalid_events": 0,
+    "duplicate_events": 0,
+    "event_types": {
+        "CreateEvent": 1471,
+        "PushEvent": 5815,
+        "WatchEvent": 1230,
+        "ReleaseEvent": 60,
+        "PullRequestEvent": 474,
+        "IssuesEvent": 545,
+        "ForkEvent": 355,
+        "GollumEvent": 61,
+        "IssueCommentEvent": 844,
+        "DeleteEvent": 260,
+        "PullRequestReviewCommentEvent": 136,
+        "CommitCommentEvent": 73,
+        "MemberEvent": 25,
+        "PublicEvent": 2
+    },
+    "errors": []
+}

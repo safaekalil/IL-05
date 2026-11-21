@@ -1,0 +1,42 @@
+{
+    "kafka_server": "kafka:9092",
+    "topic": "github_events",
+    "messages_received": 11351,
+    "unique_event_ids": 11351,
+    "duplicates": 0,
+    "errors_count": 0,
+    "errors": [],
+    "event_types": {
+        "CreateEvent": 1471,
+        "PushEvent": 5815,
+        "WatchEvent": 1230,
+        "ReleaseEvent": 60,
+        "PullRequestEvent": 474,
+        "IssuesEvent": 545,
+        "ForkEvent": 355,
+        "GollumEvent": 61,
+        "IssueCommentEvent": 844,
+        "DeleteEvent": 260,
+        "PullRequestReviewCommentEvent": 136,
+        "CommitCommentEvent": 73,
+        "MemberEvent": 25,
+        "PublicEvent": 2
+    },
+    "examples": [
+        {
+            "id": "2489651045",
+            "type": "CreateEvent",
+            "repo": "petroav/6.828"
+        },
+        {
+            "id": "2489651051",
+            "type": "PushEvent",
+            "repo": "rspt/rspt-theme"
+        },
+        {
+            "id": "2489651053",
+            "type": "PushEvent",
+            "repo": "izuzero/xe-module-ajaxboard"
+        }
+    ]
+}
