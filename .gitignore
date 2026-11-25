@@ -7,3 +7,10 @@ venv/
 .vscode/
 *.log
 .DS_Store
+
+# Big Data generated data
+data/raw/
+data/bronze/
+data/silver/
+data/gold/*
+!data/gold/README.md
