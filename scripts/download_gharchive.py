@@ -1,74 +1,159 @@
 
+import argparse
+import gzip
+import os
 import requests
+
 from pathlib import Path
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
 
-# ==========================================
-# 1. CONFIGURATION
-# ==========================================
 
-DATE = "2015-01-01"
-HOUR = 15
+DEFAULT_DATE = "2015-01-01"
+DEFAULT_HOUR = 15
 
-filename = f"{DATE}-{HOUR}.json.gz"
+DEFAULT_OUTPUT_DIR = os.getenv(
+    "DATA_RAW_DIR",
+    "/app/data/raw"
+)
 
-url = f"https://data.gharchive.org/{filename}"
 
-# ==========================================
-# 2. DOSSIER DE STOCKAGE
-# ==========================================
+def create_session():
 
-data_dir = Path("/app/data/raw")
+    retry_strategy = Retry(
+        total=5,
+        backoff_factor=2,
+        status_forcelist=[429, 500, 502, 503, 504],
+        allowed_methods=["GET"]
+    )
 
-data_dir.mkdir(parents=True, exist_ok=True)
+    adapter = HTTPAdapter(max_retries=retry_strategy)
 
-file_path = data_dir / filename
+    session = requests.Session()
+    session.mount("https://", adapter)
 
-# ==========================================
-# 3. TELECHARGEMENT
-# ==========================================
+    return session
 
-try:
+
+def verify_gzip(file_path):
+
+    try:
+        with gzip.open(file_path, "rb") as file:
+
+            while file.read(1024 * 1024):
+                pass
+
+        return True
+
+    except (OSError, EOFError):
+        return False
+
+
+def download_archive(date, hour, output_dir):
+
+    filename = f"{date}-{hour}.json.gz"
+
+    url = f"https://data.gharchive.org/{filename}"
+
+    output_dir = Path(output_dir)
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    file_path = output_dir / filename
+    temp_path = output_dir / (filename + ".part")
 
     if file_path.exists():
 
-        print("Le fichier existe déjà :", filename)
+        if verify_gzip(file_path):
 
-    else:
+            print("Archive déjà téléchargée et valide :", filename)
+            return file_path
 
-        print("Téléchargement GH Archive...")
-        print("URL :", url)
+        print("Archive existante invalide. Nouveau téléchargement.")
 
-        response = requests.get(
-            url,
-            stream=True,
-            timeout=60
-        )
+        file_path.unlink()
 
-        response.raise_for_status()
+    print("Téléchargement GH Archive...")
+    print("URL :", url)
 
-        temp_path = file_path.with_name(filename + ".part")
+    try:
 
-        with open(temp_path, "wb") as file:
+        with create_session() as session:
 
-            for chunk in response.iter_content(
-                chunk_size=1024 * 1024
-            ):
+            response = session.get(
+                url,
+                stream=True,
+                timeout=(15, 120)
+            )
 
-                if chunk:
-                    file.write(chunk)
+            response.raise_for_status()
+
+            with open(temp_path, "wb") as output:
+
+                for chunk in response.iter_content(
+                    chunk_size=1024 * 1024
+                ):
+
+                    if chunk:
+                        output.write(chunk)
+
+        if not temp_path.exists() or temp_path.stat().st_size == 0:
+            raise RuntimeError("Fichier téléchargé vide")
+
+        if not verify_gzip(temp_path):
+            raise RuntimeError("Archive gzip invalide")
 
         temp_path.replace(file_path)
 
-        print("Téléchargement terminé !")
+        print("\nTéléchargement terminé !")
+        print("Fichier :", file_path)
 
-    print("\nFichier :", file_path)
+        print(
+            "Taille :",
+            round(file_path.stat().st_size / 1024, 2),
+            "KB"
+        )
 
-    print(
-        "Taille :",
-        round(file_path.stat().st_size / 1024, 2),
-        "KB"
+        return file_path
+
+    except Exception:
+
+        if temp_path.exists():
+            temp_path.unlink()
+
+        raise
+
+
+def main():
+
+    parser = argparse.ArgumentParser(
+        description="Téléchargement des archives GH Archive"
     )
 
-except requests.exceptions.RequestException as error:
+    parser.add_argument("--date", default=DEFAULT_DATE)
+    parser.add_argument("--hour", type=int, default=DEFAULT_HOUR)
+    parser.add_argument(
+        "--output-dir",
+        default=DEFAULT_OUTPUT_DIR
+    )
 
-    print("Erreur :", error)
+    args = parser.parse_args()
+
+    if not 0 <= args.hour <= 23:
+        parser.error("L'heure doit être comprise entre 0 et 23")
+
+    try:
+
+        download_archive(
+            args.date,
+            args.hour,
+            args.output_dir
+        )
+
+    except Exception as error:
+
+        print("Erreur téléchargement :", error)
+        raise SystemExit(1)
+
+
+if __name__ == "__main__":
+    main()

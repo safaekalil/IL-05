@@ -3,48 +3,58 @@ import gzip
 import json
 from pathlib import Path
 
-# ==========================================
-# 1. CONFIGURATION
-# ==========================================
+DATE = "2015-01-01"
+DATA_DIR = Path("/app/data/raw")
 
-file_path = Path("/app/data/raw/2015-01-01-15.json.gz")
 
-# ==========================================
-# 2. VERIFICATION DU FICHIER
-# ==========================================
+def get_archive_files():
+    files = [
+        DATA_DIR / f"{DATE}-{hour}.json.gz"
+        for hour in range(23)
+    ]
 
-if not file_path.exists():
-    print("Erreur : fichier introuvable")
-    exit()
+    missing = [str(file) for file in files if not file.exists()]
 
-print("Fichier trouvé !")
+    if missing:
+        raise FileNotFoundError(
+            "Archives manquantes :\n" + "\n".join(missing)
+        )
 
-# ==========================================
-# 3. LECTURE DES EVENEMENTS JSON
-# ==========================================
+    return files
 
-events = []
 
-with gzip.open(file_path, "rt", encoding="utf-8") as file:
+def main():
+    files = get_archive_files()
 
-    for line in file:
-        event = json.loads(line)
-        events.append(event)
+    total_events = 0
+    examples = []
 
-# ==========================================
-# 4. AFFICHAGE DES RESULTATS
-# ==========================================
+    print(f"Lecture des 23 archives GH Archive du {DATE}\n")
 
-print("\nNombre total d'evenements :", len(events))
+    for file_path in files:
+        file_count = 0
 
-print("\nLES 5 PREMIERS EVENEMENTS :\n")
+        with gzip.open(file_path, "rt", encoding="utf-8") as file:
+            for line in file:
+                event = json.loads(line)
+                file_count += 1
+                total_events += 1
 
-for event in events[:5]:
+                if len(examples) < 5:
+                    examples.append(event)
 
-    print(json.dumps(
-        event,
-        indent=4,
-        ensure_ascii=False
-    ))
+        print(f"{file_path.name} : {file_count} événements")
 
-    print("-" * 60)
+    print("\n========== RÉSULTAT GLOBAL ==========")
+    print("Nombre d'archives :", len(files))
+    print("Nombre total d'événements :", total_events)
+
+    print("\nLES 5 PREMIERS ÉVÉNEMENTS :\n")
+
+    for event in examples:
+        print(json.dumps(event, indent=4, ensure_ascii=False))
+        print("-" * 60)
+
+
+if __name__ == "__main__":
+    main()

@@ -5,17 +5,15 @@ from pathlib import Path
 from collections import Counter
 from datetime import datetime
 
-# ==========================================
-# 1. CONFIGURATION
-# ==========================================
+DATE = "2015-01-01"
+DATA_DIR = Path("/app/data/raw")
 
-file_path = Path("/app/data/raw/2015-01-01-15.json.gz")
+REPORT_DIR = Path("/app/reports")
+REPORT_DIR.mkdir(parents=True, exist_ok=True)
 
-report_dir = Path("/app/reports")
-report_dir.mkdir(parents=True, exist_ok=True)
+REPORT_PATH = REPORT_DIR / "validation_report.json"
 
-# Champs obligatoires
-required_fields = [
+REQUIRED_FIELDS = [
     "id",
     "type",
     "actor",
@@ -23,134 +21,144 @@ required_fields = [
     "created_at"
 ]
 
-# ==========================================
-# 2. INITIALISATION
-# ==========================================
 
-total = 0
-valid = 0
-invalid = 0
-duplicates = 0
+def get_archive_files():
+    files = [
+        DATA_DIR / f"{DATE}-{hour}.json.gz"
+        for hour in range(23)
+    ]
 
-seen_ids = set()
-event_types = Counter()
-errors = []
+    missing = [str(file) for file in files if not file.exists()]
 
-# ==========================================
-# 3. VERIFICATION DU FICHIER
-# ==========================================
+    if missing:
+        raise FileNotFoundError(
+            "Archives manquantes :\n" + "\n".join(missing)
+        )
 
-if not file_path.exists():
-    print("Erreur : fichier introuvable")
-    exit()
+    return files
 
-print("Début de la validation GH Archive...\n")
 
-# ==========================================
-# 4. LECTURE ET VALIDATION
-# ==========================================
+def main():
+    total = 0
+    valid = 0
+    invalid = 0
+    duplicates = 0
 
-with gzip.open(file_path, "rt", encoding="utf-8") as file:
+    seen_ids = set()
+    event_types = Counter()
+    errors = []
+    files_report = {}
 
-    for line_number, line in enumerate(file, start=1):
+    files = get_archive_files()
 
-        total += 1
+    print(f"Validation des 23 archives du {DATE}...\n")
 
-        try:
+    for file_path in files:
+        file_total = 0
+        file_valid = 0
+        file_invalid = 0
 
-            event = json.loads(line)
+        print("Validation :", file_path.name)
 
-            if not isinstance(event, dict):
-                raise ValueError("L'événement n'est pas un objet JSON")
+        with gzip.open(file_path, "rt", encoding="utf-8") as file:
+            for line_number, line in enumerate(file, start=1):
+                total += 1
+                file_total += 1
 
-            missing = [
-                field for field in required_fields
-                if field not in event
-            ]
+                try:
+                    event = json.loads(line)
 
-            if missing:
-                raise ValueError(
-                    f"Champs manquants : {missing}"
-                )
+                    if not isinstance(event, dict):
+                        raise ValueError("L'événement n'est pas un objet JSON")
 
-            if not isinstance(event["actor"], dict):
-                raise ValueError("actor invalide")
+                    missing = [
+                        field for field in REQUIRED_FIELDS
+                        if field not in event
+                    ]
 
-            if not event["actor"].get("login"):
-                raise ValueError("Login du développeur manquant")
+                    if missing:
+                        raise ValueError(f"Champs manquants : {missing}")
 
-            if not isinstance(event["repo"], dict):
-                raise ValueError("repo invalide")
+                    if not isinstance(event["actor"], dict):
+                        raise ValueError("actor invalide")
 
-            if not event["repo"].get("name"):
-                raise ValueError("Nom du dépôt manquant")
+                    if not event["actor"].get("login"):
+                        raise ValueError("Login du développeur manquant")
 
-            # Vérification de la date
-            datetime.fromisoformat(
-                event["created_at"].replace("Z", "+00:00")
-            )
+                    if not isinstance(event["repo"], dict):
+                        raise ValueError("repo invalide")
 
-            # Détection des doublons
-            event_id = str(event["id"])
+                    if not event["repo"].get("name"):
+                        raise ValueError("Nom du dépôt manquant")
 
-            if event_id in seen_ids:
-                duplicates += 1
-            else:
-                seen_ids.add(event_id)
+                    datetime.fromisoformat(
+                        event["created_at"].replace("Z", "+00:00")
+                    )
 
-            valid += 1
-            event_types[event["type"]] += 1
+                    event_id = str(event["id"])
 
-        except (json.JSONDecodeError, ValueError, TypeError) as error:
+                    if event_id in seen_ids:
+                        duplicates += 1
+                    else:
+                        seen_ids.add(event_id)
 
-            invalid += 1
+                    valid += 1
+                    file_valid += 1
+                    event_types[event["type"]] += 1
 
-            if len(errors) < 10:
-                errors.append({
-                    "line": line_number,
-                    "error": str(error)
-                })
+                except (json.JSONDecodeError, ValueError, TypeError) as error:
+                    invalid += 1
+                    file_invalid += 1
 
-# ==========================================
-# 5. AFFICHAGE DES RESULTATS
-# ==========================================
+                    if len(errors) < 50:
+                        errors.append({
+                            "file": file_path.name,
+                            "line": line_number,
+                            "error": str(error)
+                        })
 
-print("========== RAPPORT DE VALIDATION ==========")
+        files_report[file_path.name] = {
+            "total": file_total,
+            "valid": file_valid,
+            "invalid": file_invalid
+        }
 
-print("Total des événements :", total)
-print("Événements valides   :", valid)
-print("Événements invalides :", invalid)
-print("Doublons détectés    :", duplicates)
+        print(
+            f"  Total : {file_total} | "
+            f"Valides : {file_valid} | "
+            f"Invalides : {file_invalid}"
+        )
 
-print("\nRépartition par type :")
+    report = {
+        "date": DATE,
+        "archives_processed": len(files),
+        "total_events": total,
+        "valid_events": valid,
+        "invalid_events": invalid,
+        "duplicate_events": duplicates,
+        "unique_event_ids": len(seen_ids),
+        "event_types": dict(event_types),
+        "files": files_report,
+        "errors": errors
+    }
 
-for event_type, count in event_types.most_common():
-    print(f"{event_type}: {count}")
+    with open(REPORT_PATH, "w", encoding="utf-8") as output:
+        json.dump(report, output, indent=4, ensure_ascii=False)
 
-# ==========================================
-# 6. GENERATION DU RAPPORT JSON
-# ==========================================
+    print("\n========== RAPPORT GLOBAL DE VALIDATION ==========")
+    print("Archives traitées :", len(files))
+    print("Total des événements :", total)
+    print("Événements valides :", valid)
+    print("Événements invalides :", invalid)
+    print("Doublons :", duplicates)
 
-report = {
-    "source": file_path.name,
-    "total_events": total,
-    "valid_events": valid,
-    "invalid_events": invalid,
-    "duplicate_events": duplicates,
-    "event_types": dict(event_types),
-    "errors": errors
-}
+    print("\nRépartition par type :")
 
-report_path = report_dir / "validation_report.json"
+    for event_type, count in event_types.most_common():
+        print(f"{event_type} : {count}")
 
-with open(report_path, "w", encoding="utf-8") as output:
+    print("\nRapport enregistré :", REPORT_PATH)
 
-    json.dump(
-        report,
-        output,
-        indent=4,
-        ensure_ascii=False
-    )
 
-print("\nRapport enregistré :", report_path)
-print("===========================================")
+if __name__ == "__main__":
+    main()

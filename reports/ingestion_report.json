@@ -1,25 +1,144 @@
 {
-    "source": "2015-01-01-15.json.gz",
+    "date": "2015-01-01",
+    "source": "23 archives GH Archive",
     "kafka_server": "kafka:9092",
     "topic": "github_events",
-    "total_events": 11351,
-    "messages_sent": 11351,
+    "archives_processed": 23,
+    "total_events": 207338,
+    "messages_sent": 207338,
     "messages_failed": 0,
     "event_types": {
-        "CreateEvent": 1471,
-        "PushEvent": 5815,
-        "WatchEvent": 1230,
-        "ReleaseEvent": 60,
-        "PullRequestEvent": 474,
-        "IssuesEvent": 545,
-        "ForkEvent": 355,
-        "GollumEvent": 61,
-        "IssueCommentEvent": 844,
-        "DeleteEvent": 260,
-        "PullRequestReviewCommentEvent": 136,
-        "CommitCommentEvent": 73,
-        "MemberEvent": 25,
-        "PublicEvent": 2
+        "PushEvent": 112894,
+        "CreateEvent": 22676,
+        "IssueCommentEvent": 16042,
+        "PullRequestReviewCommentEvent": 2038,
+        "PullRequestEvent": 8270,
+        "ForkEvent": 6845,
+        "WatchEvent": 20855,
+        "DeleteEvent": 3645,
+        "IssuesEvent": 9268,
+        "CommitCommentEvent": 1316,
+        "GollumEvent": 2103,
+        "ReleaseEvent": 773,
+        "MemberEvent": 445,
+        "PublicEvent": 168
+    },
+    "files": {
+        "2015-01-01-0.json.gz": {
+            "total": 7702,
+            "sent": 7702,
+            "failed": 0
+        },
+        "2015-01-01-1.json.gz": {
+            "total": 7427,
+            "sent": 7427,
+            "failed": 0
+        },
+        "2015-01-01-2.json.gz": {
+            "total": 6743,
+            "sent": 6743,
+            "failed": 0
+        },
+        "2015-01-01-3.json.gz": {
+            "total": 5971,
+            "sent": 5971,
+            "failed": 0
+        },
+        "2015-01-01-4.json.gz": {
+            "total": 5869,
+            "sent": 5869,
+            "failed": 0
+        },
+        "2015-01-01-5.json.gz": {
+            "total": 5887,
+            "sent": 5887,
+            "failed": 0
+        },
+        "2015-01-01-6.json.gz": {
+            "total": 8322,
+            "sent": 8322,
+            "failed": 0
+        },
+        "2015-01-01-7.json.gz": {
+            "total": 7105,
+            "sent": 7105,
+            "failed": 0
+        },
+        "2015-01-01-8.json.gz": {
+            "total": 6139,
+            "sent": 6139,
+            "failed": 0
+        },
+        "2015-01-01-9.json.gz": {
+            "total": 6371,
+            "sent": 6371,
+            "failed": 0
+        },
+        "2015-01-01-10.json.gz": {
+            "total": 7234,
+            "sent": 7234,
+            "failed": 0
+        },
+        "2015-01-01-11.json.gz": {
+            "total": 7387,
+            "sent": 7387,
+            "failed": 0
+        },
+        "2015-01-01-12.json.gz": {
+            "total": 8273,
+            "sent": 8273,
+            "failed": 0
+        },
+        "2015-01-01-13.json.gz": {
+            "total": 8971,
+            "sent": 8971,
+            "failed": 0
+        },
+        "2015-01-01-14.json.gz": {
+            "total": 10307,
+            "sent": 10307,
+            "failed": 0
+        },
+        "2015-01-01-15.json.gz": {
+            "total": 11351,
+            "sent": 11351,
+            "failed": 0
+        },
+        "2015-01-01-16.json.gz": {
+            "total": 11749,
+            "sent": 11749,
+            "failed": 0
+        },
+        "2015-01-01-17.json.gz": {
+            "total": 11961,
+            "sent": 11961,
+            "failed": 0
+        },
+        "2015-01-01-18.json.gz": {
+            "total": 12229,
+            "sent": 12229,
+            "failed": 0
+        },
+        "2015-01-01-19.json.gz": {
+            "total": 12314,
+            "sent": 12314,
+            "failed": 0
+        },
+        "2015-01-01-20.json.gz": {
+            "total": 12442,
+            "sent": 12442,
+            "failed": 0
+        },
+        "2015-01-01-21.json.gz": {
+            "total": 13111,
+            "sent": 13111,
+            "failed": 0
+        },
+        "2015-01-01-22.json.gz": {
+            "total": 12473,
+            "sent": 12473,
+            "failed": 0
+        }
     },
     "errors": []
 }

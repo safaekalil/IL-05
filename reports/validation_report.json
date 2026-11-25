@@ -1,24 +1,143 @@
 {
-    "source": "2015-01-01-15.json.gz",
-    "total_events": 11351,
-    "valid_events": 11351,
+    "date": "2015-01-01",
+    "archives_processed": 23,
+    "total_events": 207338,
+    "valid_events": 207338,
     "invalid_events": 0,
     "duplicate_events": 0,
+    "unique_event_ids": 207338,
     "event_types": {
-        "CreateEvent": 1471,
-        "PushEvent": 5815,
-        "WatchEvent": 1230,
-        "ReleaseEvent": 60,
-        "PullRequestEvent": 474,
-        "IssuesEvent": 545,
-        "ForkEvent": 355,
-        "GollumEvent": 61,
-        "IssueCommentEvent": 844,
-        "DeleteEvent": 260,
-        "PullRequestReviewCommentEvent": 136,
-        "CommitCommentEvent": 73,
-        "MemberEvent": 25,
-        "PublicEvent": 2
+        "PushEvent": 112894,
+        "CreateEvent": 22676,
+        "IssueCommentEvent": 16042,
+        "PullRequestReviewCommentEvent": 2038,
+        "PullRequestEvent": 8270,
+        "ForkEvent": 6845,
+        "WatchEvent": 20855,
+        "DeleteEvent": 3645,
+        "IssuesEvent": 9268,
+        "CommitCommentEvent": 1316,
+        "GollumEvent": 2103,
+        "ReleaseEvent": 773,
+        "MemberEvent": 445,
+        "PublicEvent": 168
+    },
+    "files": {
+        "2015-01-01-0.json.gz": {
+            "total": 7702,
+            "valid": 7702,
+            "invalid": 0
+        },
+        "2015-01-01-1.json.gz": {
+            "total": 7427,
+            "valid": 7427,
+            "invalid": 0
+        },
+        "2015-01-01-2.json.gz": {
+            "total": 6743,
+            "valid": 6743,
+            "invalid": 0
+        },
+        "2015-01-01-3.json.gz": {
+            "total": 5971,
+            "valid": 5971,
+            "invalid": 0
+        },
+        "2015-01-01-4.json.gz": {
+            "total": 5869,
+            "valid": 5869,
+            "invalid": 0
+        },
+        "2015-01-01-5.json.gz": {
+            "total": 5887,
+            "valid": 5887,
+            "invalid": 0
+        },
+        "2015-01-01-6.json.gz": {
+            "total": 8322,
+            "valid": 8322,
+            "invalid": 0
+        },
+        "2015-01-01-7.json.gz": {
+            "total": 7105,
+            "valid": 7105,
+            "invalid": 0
+        },
+        "2015-01-01-8.json.gz": {
+            "total": 6139,
+            "valid": 6139,
+            "invalid": 0
+        },
+        "2015-01-01-9.json.gz": {
+            "total": 6371,
+            "valid": 6371,
+            "invalid": 0
+        },
+        "2015-01-01-10.json.gz": {
+            "total": 7234,
+            "valid": 7234,
+            "invalid": 0
+        },
+        "2015-01-01-11.json.gz": {
+            "total": 7387,
+            "valid": 7387,
+            "invalid": 0
+        },
+        "2015-01-01-12.json.gz": {
+            "total": 8273,
+            "valid": 8273,
+            "invalid": 0
+        },
+        "2015-01-01-13.json.gz": {
+            "total": 8971,
+            "valid": 8971,
+            "invalid": 0
+        },
+        "2015-01-01-14.json.gz": {
+            "total": 10307,
+            "valid": 10307,
+            "invalid": 0
+        },
+        "2015-01-01-15.json.gz": {
+            "total": 11351,
+            "valid": 11351,
+            "invalid": 0
+        },
+        "2015-01-01-16.json.gz": {
+            "total": 11749,
+            "valid": 11749,
+            "invalid": 0
+        },
+        "2015-01-01-17.json.gz": {
+            "total": 11961,
+            "valid": 11961,
+            "invalid": 0
+        },
+        "2015-01-01-18.json.gz": {
+            "total": 12229,
+            "valid": 12229,
+            "invalid": 0
+        },
+        "2015-01-01-19.json.gz": {
+            "total": 12314,
+            "valid": 12314,
+            "invalid": 0
+        },
+        "2015-01-01-20.json.gz": {
+            "total": 12442,
+            "valid": 12442,
+            "invalid": 0
+        },
+        "2015-01-01-21.json.gz": {
+            "total": 13111,
+            "valid": 13111,
+            "invalid": 0
+        },
+        "2015-01-01-22.json.gz": {
+            "total": 12473,
+            "valid": 12473,
+            "invalid": 0
+        }
     },
     "errors": []
 }
