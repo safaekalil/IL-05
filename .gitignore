@@ -7,4 +7,3 @@ venv/
 .vscode/
 *.log
 .DS_Store
-/data/raw/
